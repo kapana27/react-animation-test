@@ -15,8 +15,18 @@ code {
 
 .container{
     width: 500px;
+    padding: 20px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.container>div{
+  width: 500px;
   padding: 20px;
   position: relative;
+  display: flex;
+  justify-content: center;
 }
 .remove-btn {
   margin-right: 0.5rem;
@@ -40,14 +50,18 @@ code {
   border: 1px solid gray;
   margin: 10px;
   position: absolute;
-  transition: width 0.5s ease-in-out, top 0.5s ease-in-out, background-color 0.5s ease-out;
+  transition: width 0.3s ease-in-out, top 0.3s ease-in-out, background-color 0.3s ease-out;
 }
 
 .item.active{
-  width: 380px;
-  background-color: green;
+  width: 350px;
 }
-
+.item.active.bottom{
+  background-color: #d09e9e;
+}
+.item.active.top{
+  background-color: #95b795;
+}
 .item-enter {
   opacity: 0;
 }
@@ -62,4 +76,16 @@ code {
 .item-exit-active {
   opacity: 0;
   transition: all 500ms ease-in;
+}
+
+.animate{
+  animation-name: example;
+  animation-duration: 1s;
+}
+@keyframes example {
+  from { opacity: 0}
+  to {opacity: 1}
+}
+.me{
+   background-color: bisque;
 }

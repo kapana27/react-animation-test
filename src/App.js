@@ -1,34 +1,47 @@
 import {createRef, useEffect, useState} from "react"
 import {CSSTransition, TransitionGroup} from "react-transition-group"
 import _ from "lodash"
+import Counter from "./Counter"
 
 const second =  [
     {
         id: 0,
         username:"test0",
         text: 'Buy eggs',
-        points:100,
+        points:201,
+        active:"",
+        rank:5
     },
     {
         id: 1,
         username:"test1",
         text: 'Pay bills',
         points:200,
+        status:""
     },
     {
         id: 2,
         username:"test2",
         text: 'Invite friends over',
         points:119,
-
+        status:""
     },
     {
         id: 3,
         username:"test3",
         text: 'Fix the TV',
         points:250,
+        status:""
+    },
+    {
+        id: 4,
+        username:"test4",
+        text: 'Fix the TV',
+        points:0,
+        status:""
     },
 ]
+let difference = [];
 
 function App() {
 
@@ -72,7 +85,37 @@ function App() {
     },
   ]);
 
+    useEffect(() => {
+        setTimeout(()=>{
+            rerender()
+            setTimeout(()=>rerender(),1000)
+        },2000)
 
+    }, []);
+
+     const rerender=()=>{
+         let tmp = items;
+
+         let index = 0;
+         _.forEach(_.orderBy(second,['points'],["desc"]), (value)=>{
+             let findIndex =_.findIndex(tmp,v=>v.username ===value.username)
+             if(findIndex===-1){
+                 let tmpValue = {...value}
+                 tmpValue["rank"]=index+1;
+                 tmpValue["nodeRef"]=createRef();
+                 tmpValue["active"] = "animate";
+                 tmpValue["points"] = value["points"];
+                 tmp = [...tmp,tmpValue]
+             }else{
+                 tmp[findIndex]["active"] =tmp[findIndex]["rank"] === index+1? '': tmp[findIndex]["rank"] > index+1 ?'active top':'active bottom'
+                 tmp[findIndex]["rank"]=index+1;
+                 tmp[findIndex]["points"]=value["points"];
+             }
+             index++;
+         })
+         setItems([...tmp])
+
+     }
 
   return (
       <div>
@@ -83,38 +126,22 @@ function App() {
               }}
 
               onClick={() => {
-                   let tmp = items;
-                    tmp[0]["rank"]=2;
-                    tmp[0]["active"]="active";
-
-                    tmp[1]["rank"]=1;
-                    tmp[1]["active"]="active";
-                    console.log(tmp)
-                    setItems([...tmp])
-
-
-
-                  setTimeout(()=>{
-                      tmp[0]["active"]="";
-                      tmp[1]["active"]="";
-                      setItems([...tmp])
-                  },500)
+                  rerender()
               }}
           >
               Add Item
           </button>
           <div className="container">
 
-
-              <TransitionGroup className="todo-list">
-                  {items.map(({ id, text,username, nodeRef ,rank,active=""}) => (
+              <TransitionGroup >
+                  {items.map(({ id, text,username, nodeRef ,rank,active="",points=0}) => (
                       <CSSTransition
                           key={username}
                           timeout={500}
                           classNames={`item `}
                           nodeRef={nodeRef}
                       >
-                          <div className={`item ${active}`} style={{top: `${(rank-1) * 80}px`}} ref={nodeRef}>
+                          <div className={`item ${active} ${username==='test3'? 'me':''}`} style={{top: `${(rank-1) * 80}px`}} ref={nodeRef}>
                               <button
                                   className="remove-btn"
                                   onClick={() =>
@@ -125,7 +152,7 @@ function App() {
                               >
                                   &times;
                               </button>
-                              {text}
+                              {text}  <Counter number={points} duration={0.2}/>
                           </div>
                       </CSSTransition>
                   ))}
